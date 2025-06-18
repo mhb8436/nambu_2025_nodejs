@@ -41,3 +41,19 @@ const s2 = moment();
 const e2 = moment("2025-12-25");
 const mb2 = e2.diff(s2, "days");
 console.log(mb2);
+
+require("moment/locale/ko"); // 한국어 로케일 불러오기
+moment.locale("ko"); // 한국어 로케일 설정
+const s3 = moment();
+console.log(`요일 : ${s3.format("d")}`); // 3
+console.log(`요일 : ${s3.format("dd")}`); // We
+console.log(`요일 : ${s3.format("ddd")}`); // Wed
+console.log(`요일 : ${s3.format("dddd")}`); // Wednesday
+
+// 문제 5 올해 크리스마스는 무슨 요일일까요?
+const s4 = moment("2025-12-25");
+console.log(`올해 크리스마스는 ${s4.format("dddd")}`);
+
+// 문제 6 자신이 태어날 날의 요일을 출력해보세요
+const s5 = moment("1975-11-16");
+console.log(`제가 태어난 요일은 ${s5.format("dddd")}`);
