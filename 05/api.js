@@ -11,6 +11,11 @@ const app = express(); // app 이란 변수에 express 함수를 담습니다. a
 const PORT = 3000; // 포트 설정
 app.use(express.json()); // app.use 미들웨를 설정하는거에요. 모든 요청과 응답에 json 포멧을 처리한다.
 
+app.use((req, res, next) => {
+  console.log("나의 첫번째 미들웨어");
+  next();
+});
+
 // 1. post.db 게시판 전용 테이블을 만들어야합니다.
 const create_sql = `
     create table if not exists posts (
@@ -117,10 +122,7 @@ app.delete("/posts/:id", (req, res) => {
   stmt.run(id); // 4. 쿼리문을 실행합니다.
   res.json({ message: "ok" }); // 5. 결과로 응답 줍니다.
 });
-app.use((req, res, next) => {
-  console.log("middleware");
-  next();
-});
+
 // 답변 추가
 app.post("/posts/:id/comments", (req, res) => {
   const postId = req.params.id;
@@ -158,4 +160,41 @@ app.get("/posts/:id/comments", (req, res) => {
   });
 });
 
+app.delete("/posts/:postId/comments/:commentId", (req, res) => {
+  const { postId, commentId } = req.params;
+  const comment = db
+    .prepare(`select id from comments where postId = ? and id = ?`)
+    .get(postId, commentId);
+  if (!comment) {
+    return res.status(404).json({ message: "댓글을 찾을 수 없어요 " });
+  }
+  const sql = `delete from comments where id = ?`;
+  db.prepare(sql).run(commentId);
+  res.status(204).end();
+});
+
+// 답글 수정(부분 업데이트)
+app.put("/posts/:postId/commments/:commentId", (req, res) => {
+  const { postId, commentId } = req.params;
+  const { author, content } = req.body;
+  const comment = db
+    .prepare(`select * from comments where postId= ? and id = ?`)
+    .get(postId, commentId);
+
+  if (!comment) {
+    return res.status(404).json({ message: "댓글이 없어용" });
+  }
+  const newAuthor = author !== undefined ? author : comment.author;
+  const newContent = content !== undefined ? content : comment.content;
+
+  db.prepare(`update comments set author = ? , content = ? where id = ?`).run(
+    newAuthor,
+    newContent,
+    commentId
+  );
+  const updatedComment = db
+    .prepare(`select * from comments where id = ?`)
+    .get(commentId);
+  res.status(200).json({ message: "ok", data: updatedComment });
+});
 app.listen(PORT, () => {});
