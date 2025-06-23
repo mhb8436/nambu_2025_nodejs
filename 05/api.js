@@ -43,14 +43,17 @@ app.post("/posts", (req, res) => {
   res.status(201).json({ message: "ok" });
 });
 
-// 게시글 목록 조회 http://localhost:3000/posts GET
+// 게시글 목록 조회 http://localhost:3000/posts?page=2 GET
 app.get("/posts", (req, res) => {
+  const page = req.query.page ? parseInt(req.query.page) : 1;
+  const limit = 5;
+  const offset = (page - 1) * limit;
   let sql = `
         select id, title, author, createdAt, count
-        from posts order by createdAt desc
+        from posts order by createdAt desc limit ? offset ?
     `;
   const stmt = db.prepare(sql); // 쿼리를 준비하세요
-  const rows = stmt.all(); //쿼리를 실행하고 결과는 [] 배열로 반환해주세요
+  const rows = stmt.all(limit, offset); //쿼리를 실행하고 결과는 [] 배열로 반환해주세요
   console.log(rows);
   res.status(200).json({ data: rows }); // JSON.stringify({data: rows}) 객체를 JSON 문자열
 });
@@ -62,6 +65,8 @@ app.get("/posts/:id", (req, res) => {
         select id, title, content, author, createdAt, count
         from posts where id = ?
     `;
+  let ac_sql = `update posts set count = count + 1 where id = ? `;
+  db.prepare(ac_sql).run(id);
   const stmt = db.prepare(sql); // select 쿼리문이 준비 완료
   const post = stmt.get(id); //  {} 로 반환 합니다.
   res.status(200).json({ data: post }); // json 문자열로 리턴 합니다.
