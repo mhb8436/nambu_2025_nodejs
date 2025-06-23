@@ -10,6 +10,7 @@ const db = new Database(db_name); // better-sqlite3의 데이터베이스를 생
 const app = express(); // app 이란 변수에 express 함수를 담습니다. app 변수를 이용해서 express 기능사용
 const PORT = 3000; // 포트 설정
 app.use(express.json()); // app.use 미들웨를 설정하는거에요. 모든 요청과 응답에 json 포멧을 처리한다.
+// cateory 여행준비, 여행 준비,    여행 준비
 
 const sql = `
     create table if not exists checklist(
