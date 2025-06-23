@@ -140,4 +140,22 @@ app.post("/posts/:id/comments", (req, res) => {
   res.status(201).json({ message: "ok", data: newComment });
 });
 
+// 답변 목록 가져오기
+app.get("/posts/:id/comments", (req, res) => {
+  const postId = req.params.id;
+  const post = db.prepare(`select id from posts where id = ?`).get(postId);
+  if (!post) {
+    return res.status(404).json({ message: "게시글을 찾을 수 없어요" });
+  }
+  const sql = `
+    select id, author, content, createdAt from comments where postId = ?
+    order by id desc
+  `;
+  const comments = db.prepare(sql).all(postId);
+  res.status(200).json({
+    data: comments,
+    message: "ok",
+  });
+});
+
 app.listen(PORT, () => {});
