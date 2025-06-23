@@ -20,27 +20,31 @@ const create_sql = `
         author varchar(100),
         createdAt datetime default current_timestamp,
         count integer default 0
-    )
+    );
+    
+    create table if not exists comments (
+      id integer primary key autoincrement,
+      content text,
+      author text, 
+      createdAt datetime default current_timestamp, 
+      postId integer, 
+      foreign key(postId) references posts(id) on delete cascade 
+    );
 `;
 db.exec(create_sql); // exec sql을 실행 시킨다.
-
-// app.post => POST 요청을 처리한다.  http://my-url/posts POST -> 두번째인자의 핸들러함수실행
 app.post("/posts", (req, res) => {
   const { title, content, author } = req.body;
-  // 요청 본문에서 title, content, author : json 포멧
   let sql = ` 
         insert into posts(title, content, author)
         values(?, ? ,?);
     `;
 
-  // insert 쿼리문을 만들어 준다.
   const stmt = db.prepare(sql);
-  // 문자열 sql 실제 쿼리문으로 파싱합니다. statement 객체로 만듬
-  stmt.run(title, content, author);
-  // stmt.run : UPDATE, INSERT, DELETE
-  // stmt.all : SELECT * FROM TABLE or SELECT * FROM TABLE WHERE --> [] 배열로 값을 반환
-  // stmt.get : SELECT * FROM TABLE LIMIT 1 --> {} 객체로 값을 반환
-  res.status(201).json({ message: "ok" });
+  const result = stmt.run(title, content, author); // insert into posts -> 자동증가된 id 가 반환 : lastInsertRowid
+  const newPost = db
+    .prepare(`select * from posts where id = ?`)
+    .get(result.lastInsertRowid);
+  res.status(201).json({ message: "ok", data: newPost });
 });
 
 // 게시글 목록 조회 http://localhost:3000/posts?page=2 GET
@@ -54,8 +58,22 @@ app.get("/posts", (req, res) => {
     `;
   const stmt = db.prepare(sql); // 쿼리를 준비하세요
   const rows = stmt.all(limit, offset); //쿼리를 실행하고 결과는 [] 배열로 반환해주세요
-  console.log(rows);
-  res.status(200).json({ data: rows }); // JSON.stringify({data: rows}) 객체를 JSON 문자열
+
+  // 전체 게시글 수 조회ㅓ
+  const totalCount = db
+    .prepare(`select count(*) as count from posts`)
+    .get().count;
+  const totalPages = Math.ceil(totalCount / limit); // 20 / 5 => 4
+
+  res.status(200).json({
+    data: rows,
+    pagination: {
+      currentPage: page,
+      totalPages: totalPages,
+      totalCount: totalCount,
+      limit: limit,
+    },
+  });
 });
 
 // 게시글 상세 정보조회 http://localhost:3000/2 GET
@@ -83,7 +101,12 @@ app.put("/posts/:id", (req, res) => {
     `; // 쿼리문 만들어서
   const stmt = db.prepare(sql); // 쿼리문을 준비시키고
   stmt.run(title, content, id); // stmt.run title, content, id 넣어서 날린다.
-  res.json({ message: "ok" });
+
+  const updatedPost = db.prepare(`select * from posts where id = ?`).get(id);
+  if (!updatedPost) {
+    return res.status(404).json({ message: "게시물을 찾을 수 없습니다. " });
+  }
+  res.status(200).json({ message: "ok", data: updatedPost });
 });
 
 // http://localhost:3000/posts/2 DELETE
@@ -95,6 +118,23 @@ app.delete("/posts/:id", (req, res) => {
   res.json({ message: "ok" }); // 5. 결과로 응답 줍니다.
 });
 
-// server start 서버 시작 시킨다
-// npx nodemon api.js
+// 답변 추가
+app.post("/posts/:id/comments", (req, res) => {
+  const postId = req.params.id;
+  const { content, author } = req.body;
+  // 1. 게시글 이 있는지 확인
+  const post = db.prepare(`select id from posts where id = ? `).get(postId); // 엉뚱한 게시글 번호인지 확인
+  if (!post) {
+    return res.status(404).json({ message: "게시글을 찾을 수 없어용" });
+  }
+  // 2. 답변 추가
+  const sql = `insert into comments(postId, author, content) values(?,?,?)`;
+  const result = db.prepare(sql).run(postId, author, content);
+  // 3. 신규 답변 조회 및 반환
+  const newComment = db
+    .prepare(`select * from comments where id = ?`)
+    .get(result.lastInsertRowid);
+  res.status(201).json({ message: "ok", data: newComment });
+});
+
 app.listen(PORT, () => {});
