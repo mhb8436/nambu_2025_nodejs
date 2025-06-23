@@ -117,7 +117,10 @@ app.delete("/posts/:id", (req, res) => {
   stmt.run(id); // 4. 쿼리문을 실행합니다.
   res.json({ message: "ok" }); // 5. 결과로 응답 줍니다.
 });
-
+app.use((req, res, next) => {
+  console.log("middleware");
+  next();
+});
 // 답변 추가
 app.post("/posts/:id/comments", (req, res) => {
   const postId = req.params.id;
