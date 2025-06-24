@@ -58,13 +58,26 @@ const Post = sequelize.define("Post", {
   },
   count: { type: DataTypes.INTEGER, defaultValue: 0 },
 });
+// 3. 답변 모델을 추가해보겠습니다.
+const Comment = sequelize.define(
+  "Comment",
+  {
+    content: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+  },
+  { tableName: "comments" }
+);
 
-User.hasMany(Post, {
-  foreignKey: "authorId", // 여기서는 FK 컬럼명 지정
-});
-Post.belongsTo(User, {
-  foreignKey: "authorId", // 동일한 FK 컬럼명을 지정해야 합니다.
-});
+User.hasMany(Post, { foreignKey: "authorId" });
+Post.belongsTo(User, { foreignKey: "authorId" });
+// 4. User <-> Comment
+User.hasMany(Comment, { foreignKey: "userId" });
+Comment.belongsTo(User, { foreignKey: "userId" });
+// 5. Comment <-> Post
+Post.hasMany(Comment, { foreignKey: "postId" });
+Comment.belongsTo(Post, { foreignKey: "postId" });
 
 (async () => {
   await sequelize.sync({ force: true });
