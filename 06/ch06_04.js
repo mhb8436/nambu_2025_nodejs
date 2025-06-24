@@ -94,9 +94,21 @@ Post.belongsTo(User); // N(Post):1(User)
     UserId: user2.id,
   });
   const posts = await Post.findAll({
-    include: {
-      User: true,
-    },
+    include: [
+      {
+        model: User,
+      },
+    ],
   });
+
   console.log(`posts => ${JSON.stringify(posts)}`);
+
+  const users = await User.findByPk(2, {
+    include: [
+      {
+        model: Post,
+      },
+    ],
+  });
+  console.log(`users => ${JSON.stringify(users)}`);
 })();
