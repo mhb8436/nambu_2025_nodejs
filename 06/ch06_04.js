@@ -59,9 +59,12 @@ const Post = sequelize.define("Post", {
   count: { type: DataTypes.INTEGER, defaultValue: 0 },
 });
 
-User.hasMany(Post); // 1(User): N(Post)
-Post.belongsTo(User); // N(Post):1(User)
-// post 테이블에 forgein key 로 user 잡힌다.
+User.hasMany(Post, {
+  foreignKey: "authorId", // 여기서는 FK 컬럼명 지정
+});
+Post.belongsTo(User, {
+  foreignKey: "authorId", // 동일한 FK 컬럼명을 지정해야 합니다.
+});
 
 (async () => {
   await sequelize.sync({ force: true });
@@ -86,12 +89,12 @@ Post.belongsTo(User); // N(Post):1(User)
   const post1 = await Post.create({
     title: "이란은 언제 공격을 중단할까요?",
     content: "니네들이 중단하면 우리도 중단한다.",
-    UserId: user2.id,
+    authorId: user2.id,
   });
   const post2 = await Post.create({
     title: "닭도리탕이 먹고싶어요 오늘저녁은...",
     content: "감자와 수제비도 넣어서 먹고 싶어여 ",
-    UserId: user2.id,
+    authorId: user2.id,
   });
   const posts = await Post.findAll({
     include: [
