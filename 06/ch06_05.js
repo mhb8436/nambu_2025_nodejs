@@ -113,6 +113,9 @@ const User = sequelize.define(
         [Op.lt]: 20, // lt less than == '<', gt : greater than  '>'
         // lte == '<='       gte == '>='
       },
+      email: {
+        [Op.like]: "%%",
+      },
     },
   });
 
