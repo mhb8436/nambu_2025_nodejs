@@ -1,18 +1,21 @@
+// 테이블 생성 구문
 //  CREATE TABLE if not exists todos (
+//         id INTEGER PRIMARY KEY AUTOINCREMENT,
 //         task VARCHAR(255),
 //         description TEXT,
-//         completed BOOLEAN DEFAULT 0, --> BOOLEAN
+//         completed BOOLEAN DEFAULT 0,
+//         createdAt datetime default current_timestamp,
 //         priority INTEGER DEFAULT 1
 //     )`;
-
-completed: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
-},
-priority : {
-    type: DataTypes.INTEGER,
-    defaultValue: 1
-}
+// 모델 생성 참고
+// completed: {
+//     type: DataTypes.BOOLEAN,
+//     defaultValue: false
+// },
+// priority : {
+//     type: DataTypes.INTEGER,
+//     defaultValue: 1
+// }
 
 // 문제 1 : Todo 모델, todos  생성
 // 문제 2 : Todo 데이터를 2개 입력
