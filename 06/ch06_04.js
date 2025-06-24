@@ -47,3 +47,7 @@ const User = sequelize.define(
   { tableName: "users" }
 );
 // 2. 게시판모델 정의
+
+(async () => {
+  await sequelize.sync({ force: true });
+})();
