@@ -74,4 +74,12 @@ const Post = sequelize.define(
   );
   const post13 = await Post.findByPk(1);
   console.log(`post13 => ${JSON.stringify(post13)}`);
+
+  await Post.destroy({
+    where: {
+      id: 1,
+    },
+  });
+  const post14 = await Post.findByPk(1);
+  console.log(`post14 => ${JSON.stringify(post14)}`);
 })();
