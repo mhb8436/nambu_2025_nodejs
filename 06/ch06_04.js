@@ -109,8 +109,29 @@ Comment.belongsTo(Post, { foreignKey: "postId" });
     content: "감자와 수제비도 넣어서 먹고 싶어여 ",
     authorId: user2.id,
   });
+
+  const comment1 = await Comment.create({
+    content: "저도 먹고 싶어요 ",
+    userId: user1.id, // FK
+    postId: post2.id, // FK
+  });
+  const comment2 = await Comment.create({
+    content: "레시피를 공개해주세요",
+    userId: user1.id, // FK
+    postId: post2.id, // FK
+  });
+  const comment3 = await Comment.create({
+    content: "시판양념 + 감자 + 닭다리 10개 + 양파 입니다. ",
+    userId: user1.id, // FK
+    postId: post2.id, // FK
+  });
+
   const posts = await Post.findAll({
     include: [
+      {
+        model: Comment,
+        include: [User],
+      },
       {
         model: User,
       },
