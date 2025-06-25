@@ -101,6 +101,20 @@ app.post("/posts/:postId/comments", async (req, res) => {
   res.status(201).json({ message: "ok", data: comment });
 });
 
+// 댓글 목록 가지고 오기
+app.get("/posts/:postId/comments", async (req, res) => {
+  const postId = req.params.postId;
+
+  const comments = await models.Comment.findAll({
+    where: { postId: postId },
+    include: [
+      { model: models.User, as: "author", attributes: ["id", "name", "email"] },
+    ],
+    order: [["createdAt", "DESC"]],
+  });
+  res.status(200).json({ message: "ok", data: comments });
+});
+
 // add route
 app.listen(PORT, () => {
   console.log(`server is listening on ${PORT}`);
