@@ -28,3 +28,14 @@ npx sequelize-cli init
   }
 }
 ```
+
+## todos.js
+
+```
+POST : todo 목록 입력 /todos
+GET : todo 목록 조회 /todos
+GET : todo 1건 조회  /todos/:id
+PUT : todo 업데이트(id) /todos/:id
+DELETE : todo 삭제(id) /todos/:id
+
+```
