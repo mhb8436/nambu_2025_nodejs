@@ -21,7 +21,15 @@ app.get("/todos", async (req, res) => {
   res.status(200).json({ message: "ok", data: todos });
 });
 
-app.get("/todos/:id", (req, res) => {});
+app.get("/todos/:id", async (req, res) => {
+  const id = req.params.id;
+  const todo = await models.Todo.findByPk(id);
+  if (todo) {
+    res.status(200).json({ message: "ok", data: todo });
+  } else {
+    res.status(404).json({ message: `할일을 찾을 수 없어요` });
+  }
+});
 
 app.put("/todos/:id", (req, res) => {});
 
