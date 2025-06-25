@@ -39,3 +39,10 @@ PUT : todo 업데이트(id) /todos/:id
 DELETE : todo 삭제(id) /todos/:id
 
 ```
+
+## run server
+
+```bash
+npx nodemon todos.js
+
+```
