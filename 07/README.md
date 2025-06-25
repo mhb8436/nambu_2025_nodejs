@@ -17,3 +17,14 @@ npx sequelize-cli init
 - migrations : sequlize-cli 로 마이그레이할 때 생성되는 파일
 - models : sequelize.define 모델 파일들만 보관 디렉토리
 - seeders : 초기 데이터 생성 파일들이 있는 디렉토리 sequelize-cli
+
+## config 수정
+
+```json
+{
+  "development": {
+    "dialect": "sqlite", // sqlite3 용
+    "storage": "sample.db"
+  }
+}
+```
