@@ -5,6 +5,28 @@ const app = express();
 const PORT = 3000;
 app.use(express.json());
 // route add
+app.post("/posts", async (req, res) => {
+  const { title, content } = req.body;
+  // 원래는 jwt 토근에서 사용자 ID를 받아와서 넣어줘야 하지만
+  // 아직 안배워서 사용자를 생성하고 그다음에 게시글을 넣겠습니다.
+  let user = await models.User.findOne({
+    where: { email: "a@example.com" },
+  });
+  if (!user) {
+    user = await models.User.create({
+      name: "이지훈",
+      email: "a@example.com",
+      password: "12345678",
+    });
+  }
+
+  const post = await models.Post.create({
+    title: title,
+    content: content,
+    authorId: user.id,
+  });
+  res.status(201).json({ message: "ok", data: post });
+});
 
 // add route
 app.listen(PORT, () => {
