@@ -57,6 +57,49 @@ app.put("/posts/:id", async (req, res) => {
 });
 
 // 게시글 삭제
+app.delete("/posts", async (req, res) => {
+  const id = req.params.id;
+  const result = await models.Post.destroy({
+    where: {
+      id: id,
+    },
+  });
+  if (result > 0) {
+    res.status(204).send();
+  } else {
+    res.status(404).json({ message: "post not found" });
+  }
+});
+
+// 댓글 관련된 코드
+// 댓글 추가
+app.post("/posts/:postId/comments", async (req, res) => {
+  const postId = req.params.postId;
+  const { content } = req.body;
+  // 1. 게시물이 존재여부 체크
+  const post = await models.Post.findByPk(postId);
+  if (!post) {
+    return res.status(404).json({ message: "post not found" });
+  }
+  // 1.5 사용자 추가
+  let user = await models.User.findOne({
+    where: { email: "b@example.com" },
+  });
+  if (!user) {
+    user = await models.User.create({
+      name: "뉴진스",
+      email: "b@example.com",
+      password: "12345678",
+    });
+  }
+  // 2. comment 추가
+  const comment = await models.Comment.create({
+    content: content,
+    postId: postId,
+    userId: user.id,
+  });
+  res.status(201).json({ message: "ok", data: comment });
+});
 
 // add route
 app.listen(PORT, () => {
