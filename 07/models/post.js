@@ -1,0 +1,23 @@
+module.exports = (sequelize, DataTypes) => {
+  const Post = sequelize.define(
+    "Post",
+    {
+      title: DataTypes.STRING,
+      conent: DataTypes.STRING,
+      fileName: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+    },
+    {
+      tableName: "posts",
+    }
+  );
+  Post.associate = function (models) {
+    Post.belongsTo(models.User, {
+      foreignKey: "authorId",
+      as: "author",
+    });
+  };
+  return Post;
+};
