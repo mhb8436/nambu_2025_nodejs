@@ -19,7 +19,6 @@ app.post("/posts", async (req, res) => {
       password: "12345678",
     });
   }
-
   const post = await models.Post.create({
     title: title,
     content: content,
@@ -27,6 +26,37 @@ app.post("/posts", async (req, res) => {
   });
   res.status(201).json({ message: "ok", data: post });
 });
+
+app.get("/posts", async (req, res) => {
+  const posts = await models.Post.findAll();
+  res.status(200).json({ message: "ok", data: posts });
+});
+
+app.get("/posts/:id", async (req, res) => {
+  const id = req.params.id;
+  const post = await models.Post.findByPk(id);
+  if (!post) {
+    return res.status(404).json({ message: "post not found" });
+  }
+  res.status(200).json({ message: "ok", data: post });
+});
+
+// 게시글 수정
+app.put("/posts/:id", async (req, res) => {
+  const id = req.params.id;
+  const { title, content } = req.body;
+  const post = await models.Post.findByPk(id);
+  if (post) {
+    if (title) post.title = title;
+    if (content) post.content = content;
+    await post.save();
+    res.status(200).json({ message: "ok", data: post });
+  } else {
+    res.status(404).json({ message: "post not found" });
+  }
+});
+
+// 게시글 삭제
 
 // add route
 app.listen(PORT, () => {
