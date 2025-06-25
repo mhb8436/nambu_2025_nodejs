@@ -47,7 +47,18 @@ app.put("/todos/:id", async (req, res) => {
   }
 });
 
-app.delete("/todos/:id", (req, res) => {});
+app.delete("/todos/:id", async (req, res) => {
+  const id = req.params.id;
+  const result = await models.Todo.destroy({
+    where: { id: id },
+  });
+  console.log(result); // result 숫자이고 지운 행의 갯수
+  if (result > 0) {
+    res.status(200).json({ message: "삭제가 성공했어용" });
+  } else {
+    res.status(404).json({ message: "할일 없어용" });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Todo 서버거 http://localhost:${PORT} 에서 실행중`);
