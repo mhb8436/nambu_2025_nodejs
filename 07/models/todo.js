@@ -22,4 +22,5 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "todos",
     }
   );
+  return Todo;
 };
