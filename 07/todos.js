@@ -3,6 +3,9 @@
 // 관련된 모듈 임포트 먼저
 const express = require("express");
 const models = require("./models");
+// requre("./models/index.js")
+// models 에는 index.js 맨 하단에 있는 db 변수가 할당이됩니다.
+// models.Todo models.Post
 const app = express();
 const PORT = 3000;
 
