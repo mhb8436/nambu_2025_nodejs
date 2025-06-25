@@ -16,7 +16,10 @@ app.post("/todos", async (req, res) => {
   res.status(201).json({ message: "ok", data: todo });
 });
 
-app.get("/todos", (req, res) => {});
+app.get("/todos", async (req, res) => {
+  const todos = await models.Todo.findAll();
+  res.status(200).json({ message: "ok", data: todos });
+});
 
 app.get("/todos/:id", (req, res) => {});
 
