@@ -142,6 +142,30 @@ app.put("/posts/:postId/comments/:id", async (req, res) => {
   res.status(200).json({ message: "ok", data: comment });
 });
 
+// 댓글 삭제
+app.delete("/posts/:postId/comments/:id", async (req, res) => {
+  const postId = req.params.postId;
+  const commentId = req.params.id;
+
+  // 1. 게시물 존재확인
+  const post = await models.Post.findByPk(postId);
+  if (!post) {
+    return res.status(404).json({ message: " post not found" });
+  }
+  // 2. 댓글 삭제
+  const result = await models.Comment.destroy({
+    where: {
+      id: commentId,
+      postId: postId,
+    },
+  });
+  if (result > 0) {
+    res.status(204).send();
+  } else {
+    res.status(404).json({ message: "comment not found" });
+  }
+});
+
 // add route
 app.listen(PORT, () => {
   console.log(`server is listening on ${PORT}`);
