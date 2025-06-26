@@ -115,6 +115,33 @@ app.get("/posts/:postId/comments", async (req, res) => {
   res.status(200).json({ message: "ok", data: comments });
 });
 
+// 댓글 수정
+app.put("/posts/:postId/comments/:id", async (req, res) => {
+  const postId = req.params.postId;
+  const commentId = req.params.id;
+  const { content } = req.body;
+
+  // 1. 게시물이 있는지 확인
+  const post = await models.Post.findByPk(postId);
+  if (!post) {
+    return res.status(404).json({ message: "post not found" });
+  }
+  // 2. 댓글을 가지고 오기
+  const comment = await models.Comment.findOne({
+    where: {
+      id: commentId,
+      postId: postId,
+    },
+  });
+  if (!comment) {
+    return res.status(404).json({ message: "commment not found" });
+  }
+  // 3. 댓글 수정 및 저장
+  if (content) comment.content = content;
+  await comment.save();
+  res.status(200).json({ message: "ok", data: comment });
+});
+
 // add route
 app.listen(PORT, () => {
   console.log(`server is listening on ${PORT}`);
