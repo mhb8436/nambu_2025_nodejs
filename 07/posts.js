@@ -1,9 +1,15 @@
 // POST/COMMENT 전용 REST ENDPOINT
 const express = require("express");
 const models = require("./models");
+// 멀터 임포트
+const multer = require("multer");
+
 const app = express();
 const PORT = 3000;
 app.use(express.json());
+// 멀터 formdata, multi part forma 데이터를 받기 위한 미들웨어설정
+app.use(express.urlencoded({ extended: true }));
+
 // route add
 app.post("/posts", async (req, res) => {
   const { title, content } = req.body;
@@ -149,6 +155,7 @@ app.delete("/posts/:postId/comments/:id", async (req, res) => {
 
   // 1. 게시물 존재확인
   const post = await models.Post.findByPk(postId);
+  console.log(post);
   if (!post) {
     return res.status(404).json({ message: " post not found" });
   }
