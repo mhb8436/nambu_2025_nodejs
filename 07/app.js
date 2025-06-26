@@ -2,6 +2,7 @@ const path = require("path");
 const express = require("express");
 const noteRouter = require("./routes/notes");
 const todoRouter = require("./routes/todos");
+const postRouter = require("./routes/posts");
 const models = require("./models");
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(`/downloads`, express.static(path.join(__dirname, uploadDir)));
 // notes url 로 들어오는 주소는 전부 noteRouter 처리
 app.use("/notes", noteRouter);
 app.use("/todos", todoRouter);
+app.use("/posts", postRouter);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
