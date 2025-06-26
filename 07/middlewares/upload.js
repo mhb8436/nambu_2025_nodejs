@@ -18,9 +18,15 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB
+  },
+});
 const uploadSingle = upload.single("file");
-
+const uploadMultiple = upload.array("files", 5); // 최대 5개 파일까지 업로드 가능
 module.exports = {
   uploadSingle,
+  uploadMultiple,
 };
