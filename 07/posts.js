@@ -63,7 +63,7 @@ app.put("/posts/:id", async (req, res) => {
 });
 
 // 게시글 삭제
-app.delete("/posts", async (req, res) => {
+app.delete("/posts/:id", async (req, res) => {
   const id = req.params.id;
   const result = await models.Post.destroy({
     where: {
