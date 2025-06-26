@@ -3,16 +3,51 @@ const express = require("express");
 const models = require("./models");
 // 멀터 임포트
 const multer = require("multer");
+const path = require("path");
 
 const app = express();
 const PORT = 3000;
 app.use(express.json());
 // 멀터 formdata, multi part forma 데이터를 받기 위한 미들웨어 설정
 app.use(express.urlencoded({ extended: true }));
+const uploadDir = `public/uploads`;
+app.use(`/downloads`, express.static(path.join(__dirname, uploadDir)));
+// http://localhost:3000/downloads/aa.png
+
+// 멀터 저장소 설정
+const storage = multer.diskStorage({
+  destination: `./${uploadDir}`, // 요 파일이 있는 디렉토리 하위로 uploadDir 만들어주세요
+  filename: function (req, file, cb) {
+    // (file.originlname).name : aa
+    // -
+    // 1781029281
+    // .png
+    // fname = aa-1781029281.png
+    const fname =
+      path.parse(file.originalname).name +
+      "-" +
+      Date.now() +
+      path.extname(file.originalname);
+    cb(
+      null, // Error
+      fname
+    );
+  },
+});
+
+const upload = multer({ storage: storage });
 
 // route add
-app.post("/posts", async (req, res) => {
+//  1. POST /posts 요청이 들어오면 먼저 upload.single("file") 미들웨어를 탑니다.
+//  upload 미들웨어의 역할은 첨부파일을 uploadDir 폴더에 저장을하는데 aa-123444.png 파일로 저장한다.
+//  req 객체에 첨부파일 정보를 실어 줍니다.
+//. 2. 우리가 만든 핸들러 함수에서 req.file 객체에서 파일 정보를 사용할 수 있습니다.
+app.post("/posts", upload.single("file"), async (req, res) => {
   const { title, content } = req.body;
+  let filename = req.file ? req.file.filename : null; // filename aa-123444.png
+  filename = `/downloads/${filename}`;
+  // http://localhost:3000/ + filename  -> http://localhost:3000/downloads/aa-123444.png
+
   // 원래는 jwt 토근에서 사용자 ID를 받아와서 넣어줘야 하지만
   // 아직 안배워서 사용자를 생성하고 그다음에 게시글을 넣겠습니다.
   let user = await models.User.findOne({
@@ -29,6 +64,7 @@ app.post("/posts", async (req, res) => {
     title: title,
     content: content,
     authorId: user.id,
+    fileName: filename,
   });
   res.status(201).json({ message: "ok", data: post });
 });
