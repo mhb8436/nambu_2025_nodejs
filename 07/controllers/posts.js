@@ -1,4 +1,3 @@
-const { createContext } = require("react");
 const models = require("../models");
 
 const createPost = async (req, res) => {
