@@ -7,7 +7,7 @@ const multer = require("multer");
 const app = express();
 const PORT = 3000;
 app.use(express.json());
-// 멀터 formdata, multi part forma 데이터를 받기 위한 미들웨어설정
+// 멀터 formdata, multi part forma 데이터를 받기 위한 미들웨어 설정
 app.use(express.urlencoded({ extended: true }));
 
 // route add
