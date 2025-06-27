@@ -3,14 +3,18 @@
 ### Install
 
 ```bash
-npm init -y
-npm i express nodemon sequelize  sequelize-cli sqlite3
-npx sequelize-cli init
-npm i multer
-npm i bcryptjs
-npm i jsonwebtoken
-npm i joi
-npm i winston
+npm init -y # 프로젝트 생성
+npm i express  # 익스프레스 웹서버
+npm i nodemon  # 노드용 데몬 설치
+npm i sequelize   # 시퀄라이즈 ORM
+npm i sequelize-cli  # 시퀄라이즈 ORM 커맨드라인 인터페이스
+npm i sqlite3 # sqlite3 디비 용
+npx sequelize-cli init  # 시퀄라이즈 초기화
+npm i multer  # 첨부파일용
+npm i bcryptjs # 패스워드 암호화
+npm i jsonwebtoken # jwt 토큰생성
+npm i joi # 유효성 검증
+npm i winston # 로깅
 ```
 
 ---
