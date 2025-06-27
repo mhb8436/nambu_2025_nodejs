@@ -9,6 +9,7 @@ npx sequelize-cli init
 npm i multer
 npm i bcryptjs
 npm i jsonwebtoken
+npm i joi
 ```
 
 ---
