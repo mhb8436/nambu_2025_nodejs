@@ -10,7 +10,7 @@ const registerSchema = Joi.object({
     "string.max": "비밀번호는 최대 30자까지만 가능합니다.",
     "string.empty": "비밀번호는 필수 입력항목 입니다.",
   }),
-  name: Joi.string().min(2).max(10).required().messsages({
+  name: Joi.string().min(2).max(10).required().messages({
     "string.min": "이름은 최소 2자리 이상입니다.",
     "string.max": "이름은 최대 10자리 까지 입니다.",
     "string.empty": "이름은 필수 입력 항목입니다.",
