@@ -15,6 +15,8 @@ npm i bcryptjs # 패스워드 암호화
 npm i jsonwebtoken # jwt 토큰생성
 npm i joi # 유효성 검증
 npm i winston # 로깅
+npm i swagger-ui-express # 스웨거 문서 제공
+npm i yamljs  # 스웨거 yaml 파일 파싱
 ```
 
 ---
