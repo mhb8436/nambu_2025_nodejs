@@ -10,6 +10,7 @@ npm i multer
 npm i bcryptjs
 npm i jsonwebtoken
 npm i joi
+npm i winston
 ```
 
 ---
