@@ -11,5 +11,6 @@ dist
 *.jpeg
 *.png
 *.txt
-+public/uploads/
+**/public/uploads/**
+**/uploads/**
 +*.db
