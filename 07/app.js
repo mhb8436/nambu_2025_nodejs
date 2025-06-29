@@ -16,8 +16,8 @@ const { logger, logging } = require("./middlewares/logger");
 app.use(logging); // 로깅 미들웨어
 app.use(express.json()); // json 파싱 미들웨어
 app.use(express.urlencoded({ extended: true }));
-const uploadDir = `public/uploads`;
-app.use(`/downloads`, express.static(path.join(__dirname, uploadDir)));
+const uploadDir = path.join(__dirname, "public", "uploads");
+app.use("/downloads", express.static(uploadDir));
 // 스웨거 설정
 // swagger.yaml 파일에서 문서 로딩
 const swaggerDocument = YAML.load(path.join(__dirname, "swagger.yaml"));

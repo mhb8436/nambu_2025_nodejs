@@ -6,15 +6,13 @@ const uploadDir = `public/uploads`;
 const storage = multer.diskStorage({
   destination: `./${uploadDir}`,
   filename: function (req, file, cb) {
-    const fname =
-      path.parse(file.originalname).name +
-      "-" +
-      Date.now() +
-      path.extname(file.originalname);
-    cb(
-      null, // Error
-      fname
+    let originalName = Buffer.from(file.originalname, "latin1").toString(
+      "utf8"
     );
+    console.log(file.originalname, originalName);
+    const fname = originalName + "-" + Date.now() + path.extname(originalName);
+    console.log(fname);
+    cb(null, fname);
   },
 });
 

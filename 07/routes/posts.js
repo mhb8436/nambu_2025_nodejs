@@ -7,7 +7,7 @@ const { authenticate } = require("../middlewares/auth");
 router.post("/", authenticate, uploadMultiple, postController.createPost);
 router.get("/", postController.findPosts);
 router.get("/:id", postController.findPost);
-router.put("/:id", postController.updatePost);
+router.put("/:id", authenticate, uploadMultiple, postController.updatePost);
 router.delete("/:id", postController.deletePost);
 
 router.post("/:postId/comments", postController.createComment);

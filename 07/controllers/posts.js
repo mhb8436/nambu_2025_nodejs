@@ -22,7 +22,9 @@ const createPost = async (req, res) => {
     // single file
     attachments.push({
       filename: req.file.filename,
-      originalname: req.file.originalname,
+      originalname: Buffer.from(req.file.originalname, "latin1").toString(
+        "utf8"
+      ),
       path: req.file.path,
       size: req.file.size,
       mimetype: req.file.mimetype,
@@ -31,7 +33,7 @@ const createPost = async (req, res) => {
     // multiple file
     attachments = req.files.map((file) => ({
       filename: file.filename,
-      originalname: file.originalname,
+      originalname: Buffer.from(file.originalname, "latin1").toString("utf8"),
       path: file.path,
       size: file.size,
       mimetype: file.mimetype,
@@ -86,16 +88,41 @@ const findPost = async (req, res) => {
 
 const updatePost = async (req, res) => {
   const id = req.params.id;
-  const { title, content } = req.body;
+  const { title, content, attachments: attachmentsRaw } = req.body;
   const post = await models.Post.findByPk(id);
-  if (post) {
-    if (title) post.title = title;
-    if (content) post.content = content;
-    await post.save();
-    res.status(200).json({ message: "ok", data: post });
-  } else {
-    res.status(404).json({ message: "post not found" });
+  if (!post) {
+    return res.status(404).json({ message: "post not found" });
   }
+  if (title) post.title = title;
+  if (content) post.content = content;
+
+  // 기존 첨부파일(프론트에서 유지 요청한 파일) 파싱
+  let attachments = [];
+  if (attachmentsRaw) {
+    try {
+      attachments = JSON.parse(attachmentsRaw);
+    } catch (e) {
+      attachments = Array.isArray(attachmentsRaw) ? attachmentsRaw : [];
+    }
+  } else if (Array.isArray(post.attachments)) {
+    attachments = post.attachments;
+  }
+
+  // 새로 업로드된 파일 추가
+  if (req.files && req.files.length > 0) {
+    console.log(req.files);
+    const newFiles = req.files.map((file) => ({
+      filename: file.filename,
+      originalname: Buffer.from(file.originalname, "latin1").toString("utf8"),
+      path: file.path,
+      size: file.size,
+      mimetype: file.mimetype,
+    }));
+    attachments = attachments.concat(newFiles);
+  }
+  post.attachments = attachments;
+  await post.save();
+  res.status(200).json({ message: "ok", data: post });
 };
 
 const deletePost = async (req, res) => {
@@ -120,22 +147,12 @@ const createComment = async (req, res) => {
   if (!post) {
     return res.status(404).json({ message: "post not found" });
   }
-  // 1.5 사용자 추가
-  let user = await models.User.findOne({
-    where: { email: "b@example.com" },
-  });
-  if (!user) {
-    user = await models.User.create({
-      name: "뉴진스",
-      email: "b@example.com",
-      password: "12345678",
-    });
-  }
+
   // 2. comment 추가
   const comment = await models.Comment.create({
     content: content,
     postId: postId,
-    userId: user.id,
+    userId: req.user.id,
   });
   res.status(201).json({ message: "ok", data: comment });
 };
