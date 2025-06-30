@@ -11,6 +11,7 @@ const register = async (req, res) => {
     name: name,
     password: hashedPassword,
   });
+  console.log("register", user);
   res.status(201).json({ message: "ok", data: user });
 };
 

@@ -2,6 +2,7 @@ const { registerSchema } = require("../utils/validation");
 
 const validateRegister = (req, res, next) => {
   // registerSechema를 이용해서 입력데이터를 검증합니다.
+
   const { error } = registerSchema.validate(req.body);
 
   if (error) {
