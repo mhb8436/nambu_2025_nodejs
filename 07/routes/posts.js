@@ -10,9 +10,13 @@ router.get("/:id", postController.findPost);
 router.put("/:id", authenticate, uploadMultiple, postController.updatePost);
 router.delete("/:id", postController.deletePost);
 
-router.post("/:postId/comments", postController.createComment);
+router.post("/:postId/comments", authenticate, postController.createComment);
 router.get("/:postId/comments", postController.findComments);
-router.put("/:postId/comments/:id", postController.updateComment);
-router.delete("/:postId/comments/:id", postController.deleteComment);
+router.put("/:postId/comments/:id", authenticate, postController.updateComment);
+router.delete(
+  "/:postId/comments/:id",
+  authenticate,
+  postController.deleteComment
+);
 
 module.exports = router;

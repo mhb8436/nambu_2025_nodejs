@@ -15,7 +15,7 @@ function PostList() {
   const fetchPosts = async (page) => {
     try {
       setLoading(true);
-      const response = await fetch(`/posts?page=${page}`);
+      const response = await fetch(`/posts?page=${page}`); // GET http://localhost:3000/posts
       const data = await response.json();
 
       if (!response.ok) {
