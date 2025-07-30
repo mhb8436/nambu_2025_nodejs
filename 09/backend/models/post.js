@@ -3,16 +3,9 @@ module.exports = (sequelize, DataTypes) => {
     "Post",
     {
       title: DataTypes.STRING,
-      content: DataTypes.STRING,
-      fileName: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      attachments: {
-        type: DataTypes.JSON, // 여러 파일 정보를 JSON으로 저장
-        allowNull: true,
-        defaultValue: [],
-      },
+      content: DataTypes.TEXT,
+      authorId: DataTypes.INTEGER,
+      imageUrls: DataTypes.TEXT, // JSON 문자열로 저장
     },
     {
       tableName: "posts",
@@ -23,11 +16,10 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "authorId",
       as: "author",
     });
-
     Post.hasMany(models.Comment, {
       foreignKey: "postId",
       as: "comments",
     });
   };
   return Post;
-};
+}; 

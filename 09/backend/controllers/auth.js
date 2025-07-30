@@ -126,9 +126,27 @@ const naverCallback = async (req, res) => {
   }
 };
 
+const logout = async (req, res) => {
+  try {
+    const userId = req.user.id; // auth 미들웨어에서 설정된 사용자 정보
+
+    // 사용자의 tokenVersion을 증가시켜 기존 토큰을 무력화
+    await models.User.update(
+      { tokenVersion: req.user.tokenVersion + 1 },
+      { where: { id: userId } }
+    );
+
+    res.json({ message: "로그아웃되었습니다." });
+  } catch (error) {
+    console.error("로그아웃 에러:", error);
+    res.status(500).json({ message: "로그아웃 처리 중 오류가 발생했습니다." });
+  }
+};
+
 module.exports = {
   register,
   login,
+  logout,
   getNaverLoginUrl,
   naverCallback,
 };

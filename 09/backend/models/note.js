@@ -2,20 +2,12 @@ module.exports = (sequelize, DataTypes) => {
   const Note = sequelize.define(
     "Note",
     {
-      title: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      content: {
-        type: DataTypes.TEXT,
-      },
-      tag: {
-        type: DataTypes.STRING,
-      },
+      content: DataTypes.TEXT,
+      tag: DataTypes.STRING,
     },
     {
       tableName: "notes",
     }
   );
   return Note;
-};
+}; 
